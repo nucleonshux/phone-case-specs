@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手机壳机型规格查询</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f2f4f8;
+    color: #1f2329;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+  header { text-align: center; margin-bottom: 16px; }
+  header h1 { font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+  header p { font-size: 13px; color: #8a919f; margin-top: 6px; }
+
+  .tabs { display: flex; gap: 8px; justify-content: center; margin: 16px 0 18px; }
+  .tab {
+    padding: 8px 24px; font-size: 14px; border-radius: 999px; cursor: pointer;
+    border: 1px solid #d6dae3; background: #fff; color: #4b5462; user-select: none; transition: all .15s;
+  }
+  .tab.active { background: #2b6cf6; border-color: #2b6cf6; color: #fff; }
+
+  .search-box { position: relative; margin: 18px 0 14px; }
+  .search-box input {
+    width: 100%; padding: 14px 46px 14px 18px; font-size: 16px;
+    border: 1px solid #d6dae3; border-radius: 12px; background: #fff; outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search-box input:focus { border-color: #2b6cf6; box-shadow: 0 0 0 3px rgba(43,108,246,.12); }
+  .search-box .icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9aa3b2; font-size: 18px; pointer-events: none; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .chip {
+    padding: 7px 14px; font-size: 13px; border-radius: 999px;
+    border: 1px solid #d6dae3; background: #fff; color: #4b5462;
+    cursor: pointer; user-select: none; transition: all .15s;
+  }
+  .chip.active { background: #2b6cf6; border-color: #2b6cf6; color: #fff; }
+
+  .stats { font-size: 13px; color: #8a919f; margin-bottom: 10px; }
+  .stats b { color: #2b6cf6; }
+
+  .list { display: flex; flex-direction: column; gap: 8px; }
+  .row {
+    display: flex; align-items: center; gap: 12px;
+    background: #fff; border: 1px solid #e7eaf0; border-radius: 12px; padding: 12px 16px;
+  }
+  .row .info { flex: 1; min-width: 0; }
+  .row .name { font-size: 15px; font-weight: 600; }
+  .row .name .new-tag { font-size: 11px; background: #fff1e8; color: #e8743b; padding: 1px 7px; border-radius: 4px; margin-left: 8px; font-weight: 500; vertical-align: middle; }
+  .row .brand { font-size: 12px; color: #8a919f; margin-top: 2px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  .badge { font-size: 12px; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+  .badge.yes { background: #e6f7ed; color: #1a9e55; }
+  .badge.no { background: #f2f3f5; color: #b6bcc7; }
+  .del-btn {
+    border: 1px solid #ffd6d6; background: #fff; color: #e5484d; font-size: 12px;
+    padding: 5px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap;
+  }
+  .del-btn:hover { background: #fff1f1; }
+
+  .empty { text-align: center; padding: 60px 0; color: #9aa3b2; font-size: 14px; }
+  footer { text-align: center; margin-top: 30px; font-size: 12px; color: #b6bcc7; }
+
+  /* 录入表单 */
+  .form-card {
+    background: #fff; border: 1px solid #e7eaf0; border-radius: 14px; padding: 24px; max-width: 560px; margin: 0 auto;
+  }
+  .form-card label { display: block; font-size: 13px; color: #4b5462; margin: 14px 0 6px; font-weight: 500; }
+  .form-card label:first-child { margin-top: 0; }
+  .form-card input[type=text], .form-card select {
+    width: 100%; padding: 11px 14px; font-size: 15px;
+    border: 1px solid #d6dae3; border-radius: 10px; outline: none; background: #fff;
+  }
+  .form-card input:focus, .form-card select:focus { border-color: #2b6cf6; box-shadow: 0 0 0 3px rgba(43,108,246,.12); }
+  .spec-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+  .spec-opt {
+    display: flex; align-items: center; gap: 8px; padding: 11px 14px;
+    border: 1px solid #d6dae3; border-radius: 10px; cursor: pointer; font-size: 14px; transition: all .15s;
+  }
+  .spec-opt input { width: 16px; height: 16px; accent-color: #2b6cf6; }
+  .spec-opt.checked { border-color: #2b6cf6; background: #eef3ff; }
+  .save-btn {
+    width: 100%; margin-top: 20px; padding: 13px; font-size: 15px; font-weight: 600;
+    background: #2b6cf6; color: #fff; border: none; border-radius: 10px; cursor: pointer;
+  }
+  .save-btn:hover { background: #1f5ce0; }
+  .form-msg { text-align: center; font-size: 13px; margin-top: 12px; min-height: 18px; }
+  .form-msg.ok { color: #1a9e55; }
+  .form-msg.err { color: #e5484d; }
+  .custom-list { max-width: 560px; margin: 24px auto 0; }
+  .custom-list h3 { font-size: 14px; color: #4b5462; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>手机壳机型规格查询</h1>
+    <p>输入手机型号，查询该机型支持的壳料规格</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-view="query">规格查询</div>
+    <div class="tab" data-view="add">录入新型号</div>
+  </div>
+
+  <!-- 查询视图 -->
+  <div id="view-query">
+    <div class="search-box">
+      <input id="q" type="text" placeholder="输入型号，如 iPhone 16、Mate 60、小米15…" autocomplete="off">
+      <span class="icon">&#128269;</span>
+    </div>
+    <div class="filters" id="filters">
+      <div class="chip" data-k="tr">透明软壳</div>
+      <div class="chip" data-k="t15">透明1.5全包</div>
+      <div class="chip" data-k="tk">太空壳精孔</div>
+      <div class="chip" data-k="dg">液态硅胶-古董白</div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="list" id="list"></div>
+    <div class="empty" id="empty" style="display:none;">未找到匹配的机型</div>
+  </div>
+
+  <!-- 录入视图 -->
+  <div id="view-add" style="display:none;">
+    <div class="form-card">
+      <label>型号名称</label>
+      <input type="text" id="in-name" placeholder="如 iPhone 17e、小米15 Ultra">
+      <label>品牌</label>
+      <select id="in-brand"></select>
+      <label>支持的材质（勾选）</label>
+      <div class="spec-opts" id="spec-opts">
+        <label class="spec-opt"><input type="checkbox" data-k="tr">透明软壳</label>
+        <label class="spec-opt"><input type="checkbox" data-k="t15">透明1.5全包</label>
+        <label class="spec-opt"><input type="checkbox" data-k="tk">太空壳精孔</label>
+        <label class="spec-opt"><input type="checkbox" data-k="dg">液态硅胶-古董白</label>
+      </div>
+      <button class="save-btn" id="save-btn">保存录入</button>
+      <div class="form-msg" id="form-msg"></div>
+    </div>
+    <div class="custom-list" id="custom-list"></div>
+  </div>
+
+  <footer>数据来源：赛客诺在线制作平台 · 本地录入保存在当前浏览器</footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+  const KEYS = ['tr', 't15', 'tk', 'dg'];
+  const LABEL = { tr: '透明软壳', t15: '透明1.5全包', tk: '太空壳精孔', dg: '液态硅胶-古董白' };
+  const BRANDS = ['苹果','华为','荣耀','小米','OPPO','vivo','三星','魅族','努比亚','一加','LG','华硕','摩托罗拉','谷歌','NZONE','其他品牌'];
+  const LS_KEY = 'phone_case_custom_models';
+
+  // 读取本地录入数据
+  function loadCustom() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch(e) { return []; }
+  }
+  function saveCustom(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+
+  // 合并内置数据 + 本地录入：统一行结构 [名称, 品牌, tr, t15, tk, dg, isCustom]
+  function getAllRows() {
+    const built = DATA.map(r => [r[0], r[1], r[2], r[3], r[4], r[5], false]);
+    const custom = loadCustom().map(r => [r.n, r.b, r.tr, r.t15, r.tk, r.dg, true]);
+    return built.concat(custom);
+  }
+
+  const state = { q: '', active: new Set() };
+  const qEl = document.getElementById('q');
+  const listEl = document.getElementById('list');
+  const emptyEl = document.getElementById('empty');
+  const statsEl = document.getElementById('stats');
+
+  // 视图切换
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const v = t.dataset.view;
+      document.getElementById('view-query').style.display = v === 'query' ? '' : 'none';
+      document.getElementById('view-add').style.display = v === 'add' ? '' : 'none';
+      if (v === 'add') renderCustomList();
+    });
+  });
+
+  // 筛选
+  document.getElementById('filters').addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    const k = chip.dataset.k;
+    if (state.active.has(k)) { state.active.delete(k); chip.classList.remove('active'); }
+    else { state.active.add(k); chip.classList.add('active'); }
+    render();
+  });
+  qEl.addEventListener('input', () => { state.q = qEl.value.trim().toLowerCase(); render(); });
+
+  function render() {
+    const q = state.q;
+    if (!q && state.active.size === 0) {
+      statsEl.innerHTML = ''; listEl.innerHTML = '';
+      emptyEl.style.display = 'block';
+      emptyEl.textContent = '输入型号或点击下方规格标签开始查询';
+      return;
+    }
+    const rows = getAllRows().filter(r => {
+      if (q && !r[0].toLowerCase().includes(q) && !r[1].toLowerCase().includes(q)) return false;
+      for (const k of state.active) { if (!r[KEYS.indexOf(k) + 2]) return false; }
+      return true;
+    });
+    statsEl.innerHTML = '共匹配 <b>' + rows.length + '</b> 个机型';
+    emptyEl.style.display = rows.length ? 'none' : 'block';
+    emptyEl.textContent = '未找到匹配的机型';
+    listEl.innerHTML = rows.slice(0, 200).map(r => {
+      const badges = KEYS.map((k, i) => {
+        const on = r[i + 2];
+        return '<span class="badge ' + (on ? 'yes' : 'no') + '">' + (on ? '✓ ' : '✕ ') + LABEL[k] + '</span>';
+      }).join('');
+      const tag = r[6] ? '<span class="new-tag">新增</span>' : '';
+      return '<div class="row"><div class="info"><div class="name">' + r[0] + tag + '</div><div class="brand">' + r[1] + '</div></div><div class="badges">' + badges + '</div></div>';
+    }).join('');
+    if (rows.length > 200) listEl.innerHTML += '<div class="empty" style="padding:24px;">仅显示前 200 条，请输入更精确的型号以缩小范围</div>';
+  }
+
+  // 录入表单
+  const brandSel = document.getElementById('in-brand');
+  BRANDS.forEach(b => { const o = document.createElement('option'); o.value = b; o.textContent = b; brandSel.appendChild(o); });
+  document.querySelectorAll('#spec-opts input').forEach(cb => {
+    cb.addEventListener('change', () => cb.closest('.spec-opt').classList.toggle('checked', cb.checked));
+  });
+
+  document.getElementById('save-btn').addEventListener('click', () => {
+    const name = document.getElementById('in-name').value.trim();
+    const brand = brandSel.value;
+    const msgEl = document.getElementById('form-msg');
+    if (!name) { msgEl.className = 'form-msg err'; msgEl.textContent = '请输入型号名称'; return; }
+    const specs = {};
+    KEYS.forEach(k => {
+      specs[k] = document.querySelector('#spec-opts input[data-k="' + k + '"]').checked ? 1 : 0;
+    });
+    if (!specs.tr && !specs.t15 && !specs.tk && !specs.dg) {
+      msgEl.className = 'form-msg err'; msgEl.textContent = '请至少勾选一个材质'; return;
+    }
+    const custom = loadCustom();
+    if (custom.some(r => r.n === name)) { msgEl.className = 'form-msg err'; msgEl.textContent = '该型号已录入过，请勿重复'; return; }
+    custom.push({ n: name, b: brand, tr: specs.tr, t15: specs.t15, tk: specs.tk, dg: specs.dg });
+    saveCustom(custom);
+    msgEl.className = 'form-msg ok'; msgEl.textContent = '保存成功：' + name;
+    document.getElementById('in-name').value = '';
+    document.querySelectorAll('#spec-opts input').forEach(cb => { cb.checked = false; cb.closest('.spec-opt').classList.remove('checked'); });
+    renderCustomList();
+    render();
+  });
+
+  function renderCustomList() {
+    const custom = loadCustom();
+    const box = document.getElementById('custom-list');
+    if (!custom.length) { box.innerHTML = ''; return; }
+    let html = '<h3>已录入（' + custom.length + ' 条，可删除）</h3>';
+    custom.forEach((r, i) => {
+      const badges = KEYS.map(k => r[k] ? '<span class="badge yes">✓ ' + LABEL[k] + '</span>' : '').join('');
+      html += '<div class="row"><div class="info"><div class="name">' + r.n + '<span class="new-tag">新增</span></div><div class="brand">' + r.b + '</div></div><div class="badges">' + badges + '</div><button class="del-btn" data-i="' + i + '">删除</button></div>';
+    });
+    box.innerHTML = html;
+    box.querySelectorAll('.del-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const arr = loadCustom();
+        arr.splice(Number(btn.dataset.i), 1);
+        saveCustom(arr);
+        renderCustomList(); render();
+      });
+    });
+  }
+
+  render();
+</script>
+</body>
+</html>
