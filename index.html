@@ -63,6 +63,17 @@
   }
   .del-btn:hover { background: #fff1f1; }
 
+  /* 手机端：竖排，型号名一行完整显示，徽章在下方 */
+  @media (max-width: 640px) {
+    .wrap { padding: 16px 12px 40px; }
+    header h1 { font-size: 20px; }
+    .tabs { margin: 12px 0 14px; }
+    .tab { padding: 7px 18px; font-size: 13px; }
+    .row { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px 14px; }
+    .row .name { font-size: 17px; white-space: normal; word-break: break-all; }
+    .badges { justify-content: flex-start; }
+  }
+
   .empty { text-align: center; padding: 60px 0; color: #9aa3b2; font-size: 14px; }
   footer { text-align: center; margin-top: 30px; font-size: 12px; color: #b6bcc7; }
 
@@ -195,7 +206,12 @@
     else { state.active.add(k); chip.classList.add('active'); }
     render();
   });
-  qEl.addEventListener('input', () => { state.q = qEl.value.trim().toLowerCase(); render(); });
+  qEl.addEventListener('input', () => { state.q = qEl.value.trim(); render(); });
+
+  // 模糊匹配：忽略大小写、空格、全半角差异
+  function norm(s) {
+    return (s || '').toLowerCase().replace(/[\s　]+/g, '').replace(/（/g, '(').replace(/）/g, ')');
+  }
 
   function render() {
     const q = state.q;
@@ -205,8 +221,9 @@
       emptyEl.textContent = '输入型号或点击下方规格标签开始查询';
       return;
     }
+    const nq = norm(q);
     const rows = getAllRows().filter(r => {
-      if (q && !r[0].toLowerCase().includes(q) && !r[1].toLowerCase().includes(q)) return false;
+      if (nq && !norm(r[0]).includes(nq) && !norm(r[1]).includes(nq)) return false;
       for (const k of state.active) { if (!r[KEYS.indexOf(k) + 2]) return false; }
       return true;
     });
