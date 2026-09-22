@@ -431,10 +431,14 @@
       }
       showResult();
     }
-      try {
-    }
     function showResult() {
-        const url = canvas.toDataURL('image/png');
+      try {
+        const th = 800;
+        const tw = Math.round(w * th / h);
+        const out = document.createElement('canvas');
+        out.width = tw; out.height = th;
+        out.getContext('2d').drawImage(canvas, 0, 0, tw, th);
+        const url = out.toDataURL('image/png');
         document.getElementById('save-result').src = url;
         document.getElementById('save-overlay').style.display = 'flex';
       } catch(e) {
@@ -445,7 +449,6 @@
   document.getElementById('save-close').addEventListener('click', () => {
     document.getElementById('save-overlay').style.display = 'none';
   });
-
   function render() {
     const q = state.q;
     if (!q && state.active.size === 0) {
