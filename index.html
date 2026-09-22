@@ -395,8 +395,8 @@
           const cover = Math.max(w / img.width, h / img.height) * sc;
           const iw = img.width * cover, ih = img.height * cover;
           const ox = (w - iw) / 2;
+          const oy = (h - ih) / 2 + py * 2;
           ctx.drawImage(img, ox, oy, iw, ih);
-          cb();
         };
         img.onerror = cb;
         img.src = imgUrl;
@@ -409,7 +409,6 @@
       mImg.onerror = () => { drawWm(); };
       mImg.src = lbImg.src;
     });
-    function drawWm() {
     function drawWm() {
       const wmTxt = lbWmInput.value.trim();
       if (wmTxt) {
