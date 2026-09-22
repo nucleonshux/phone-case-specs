@@ -515,7 +515,7 @@
         const on = r[ki + 2];
         return '<span class="badge ' + (on ? 'yes' : 'no') + '">' + (on ? '✓ ' : '✕ ') + LABEL[k] + '</span>';
       }).join('');
-      const tag = r[6] ? '<span class="new-tag">新增</span>' : '';
+      const tag = r[6] ? '' : '';
       const open = state.openIdx === i ? ' open' : '';
       html += '<div class="row' + open + '" data-idx="' + i + '"><div class="info"><div class="name">' + r[0] + tag + '</div><div class="brand">' + r[1] + '</div></div><div class="badges">' + badges + '</div><span class="chevron">&#9654;</span></div>';
       // 展开材质按钮
@@ -583,7 +583,7 @@
     let html = '<h3>已录入（' + custom.length + ' 条，可删除）</h3>';
     custom.forEach((r, i) => {
       const badges = KEYS.map(k => r[k] ? '<span class="badge yes">✓ ' + LABEL[k] + '</span>' : '').join('');
-      html += '<div class="row" style="cursor:default;"><div class="info"><div class="name">' + r.n + '<span class="new-tag">新增</span></div><div class="brand">' + r.b + '</div></div><div class="badges">' + badges + '</div><button class="del-btn" data-i="' + i + '">删除</button></div>';
+      html += '<div class="row" style="cursor:default;"><div class="info"><div class="name">' + r.n + '</div><div class="brand">' + r.b + '</div></div><div class="badges">' + badges + '</div><button class="del-btn" data-i="' + i + '">删除</button></div>';
     });
     box.innerHTML = html;
     box.querySelectorAll('.del-btn').forEach(btn => {
