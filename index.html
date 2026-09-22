@@ -91,6 +91,18 @@
     position: absolute; top: 18px; right: 24px; color: #fff; font-size: 32px;
     cursor: pointer; line-height: 1;
   }
+  .lb-actions { margin-top: 14px; display: flex; gap: 10px; }
+  .lb-btn {
+    padding: 8px 18px; font-size: 13px; border-radius: 8px; cursor: pointer;
+    border: 1px solid #fff; background: transparent; color: #fff;
+  }
+  .lb-btn.primary { background: #2b6cf6; border-color: #2b6cf6; }
+  .composite-wrap { position: relative; width: 280px; max-width: 80vw; }
+  .composite-wrap .user-art {
+    position: absolute; top: 11%; left: 9%; width: 82%; height: 78%;
+    border-radius: 36px; object-fit: cover; display: none;
+  }
+  .composite-wrap .base-mask { position: relative; width: 100%; display: block; }
 
   .del-btn {
     border: 1px solid #ffd6d6; background: #fff; color: #e5484d; font-size: 12px;
@@ -200,8 +212,16 @@
 <!-- 大图预览 -->
 <div class="lightbox" id="lightbox">
   <span class="lb-close" id="lb-close">&times;</span>
-  <img id="lb-img" src="" alt="">
+  <div class="composite-wrap">
+    <img id="lb-user-art" class="user-art" src="" alt="">
+    <img id="lb-img" class="base-mask" src="" alt="">
+  </div>
   <div class="lb-title" id="lb-title"></div>
+  <div class="lb-actions">
+    <button class="lb-btn primary" id="lb-upload">上传自己的图预览</button>
+    <button class="lb-btn" id="lb-reset">恢复底图</button>
+  </div>
+  <input type="file" id="lb-file" accept="image/*" style="display:none;">
 </div>
 
 <script src="data.js"></script>
@@ -265,14 +285,38 @@
 
   // lightbox
   const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const lbUserArt = document.getElementById('lb-user-art');
   document.getElementById('lb-close').addEventListener('click', () => lightbox.classList.remove('show'));
   lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('show'); });
+
+  let currentBaseUrl = '';
   function openLightbox(url, title) {
     if (!url) return;
-    document.getElementById('lb-img').src = url;
+    currentBaseUrl = url;
+    lbUserArt.style.display = 'none';
+    lbUserArt.src = '';
+    lbImg.src = url;
     document.getElementById('lb-title').textContent = title;
     lightbox.classList.add('show');
   }
+  // 上传图片预览
+  const lbFile = document.getElementById('lb-file');
+  document.getElementById('lb-upload').addEventListener('click', () => lbFile.click());
+  lbFile.addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      lbUserArt.src = ev.target.result;
+      lbUserArt.style.display = 'block';
+    };
+    reader.readAsDataURL(f);
+  });
+  document.getElementById('lb-reset').addEventListener('click', () => {
+    lbUserArt.style.display = 'none';
+    lbUserArt.src = '';
+  });
 
   function render() {
     const q = state.q;
