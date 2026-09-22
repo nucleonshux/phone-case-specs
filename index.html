@@ -104,6 +104,10 @@
   .lb-sliders label { color: #ccc; font-size: 12px; display: flex; align-items: center; gap: 8px; }
   .lb-sliders span { min-width: 38px; text-align: right; color: #2b6cf6; font-weight: 600; font-size: 12px; }
   .lb-sliders input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; background: #444; border-radius: 2px; outline: none; }
+  .lb-watermark-row { margin-top: 10px; width: 280px; max-width: 80vw; }
+  .lb-watermark-row label { color: #ccc; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+  .lb-watermark-row input { flex: 1; padding: 6px 10px; border-radius: 6px; border: 1px solid #555; background: #222; color: #fff; font-size: 13px; }
+  .wm-layer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 10; opacity: 0.15; }
   .lb-sliders input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #2b6cf6; cursor: pointer; box-shadow: 0 0 4px rgba(43,108,246,.5); }
   .user-art { transition: background-position .15s ease-out, background-size .15s ease-out; }
   .composite-wrap { position: relative; width: 280px; max-width: 80vw; overflow: hidden; border-radius: 30px; }
@@ -227,6 +231,7 @@
   <div class="composite-wrap">
     <div class="case-bg" id="lb-bg"></div>
     <div id="lb-user-art" class="user-art"></div>
+    <div id="lb-wm" class="wm-layer" style="display:none;"></div>
     <img id="lb-img" class="base-mask" src="" alt="">
   </div>
   <div class="lb-title" id="lb-title"></div>
@@ -359,6 +364,17 @@
 
   lbPosY.addEventListener('input', updateArt);
   lbScale.addEventListener('input', updateArt);
+  const lbWm = document.getElementById('lb-wm');
+  const lbWmInput = document.getElementById('lb-watermark');
+  function updateWm() {
+    const txt = lbWmInput.value.trim();
+    if (!txt) { lbWm.style.display = 'none'; return; }
+    lbWm.style.display = 'block';
+    const svg = '<svg xmlns=http://www.w3.org/2000/svg width=200 height=100><text x=100 y=55 font-size=16 fill=%23000 text-anchor=middle transform=rotate(-45 100 55)>' + txt + '</text></svg>';
+    lbWm.style.backgroundImage = 'url(data:image/svg+xml,' + encodeURIComponent(svg) + ')';
+    lbWm.style.backgroundRepeat = 'repeat';
+  }
+  lbWmInput.addEventListener('input', updateWm);
 
   document.getElementById('lb-save').addEventListener('click', () => {
     const w = 861, h = 1784;
