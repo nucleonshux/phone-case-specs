@@ -381,17 +381,17 @@
       const tag = r[6] ? '<span class="new-tag">新增</span>' : '';
       const open = state.openIdx === i ? ' open' : '';
       html += '<div class="row' + open + '" data-idx="' + i + '"><div class="info"><div class="name">' + r[0] + tag + '</div><div class="brand">' + r[1] + '</div></div><div class="badges">' + badges + '</div><span class="chevron">&#9654;</span></div>';
-      // 展开底图
+      // 展开材质按钮
       if (state.openIdx === i) {
-        const thumbs = KEYS.map(k => {
-          if (!r[KEYS.indexOf(k) + 2]) return '';  // 不支持的不显示
+        const btns = KEYS.map(k => {
+          if (!r[KEYS.indexOf(k) + 2]) return "";
           const url = r.imgs[k];
-          if (!url) return '<div class="thumb"><div class="tlabel">' + LABEL[k] + '</div></div>';
-          return '<div class="thumb" data-img="' + url + '" data-label="' + r[0] + ' · ' + LABEL[k] + '" data-key="' + k + '"><img src="' + url + '" loading="lazy" alt="' + LABEL[k] + '"><div class="tlabel">' + LABEL[k] + '</div></div>';
-        }).join('');
-        html += '<div class="detail"><div class="detail-title">点击底图查看大图</div><div class="thumbs">' + thumbs + '</div></div>';
+          if (!url) return "";
+          return "<button class=\"mat-btn\" data-img=\"\" + url + \"\" data-label=\"\" + r[0] + " - " + LABEL[k] + \"\" data-key=\"\" + k + \"\">\" + LABEL[k] + "</button>";
+        }).join("");
+        html += "<div class=\"detail\"><div class=\"mat-btns\">\" + btns + \"</div></div>";
       }
-    });
+
     listEl.innerHTML = html;
 
     // 行点击展开
