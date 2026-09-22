@@ -197,6 +197,7 @@
       <div class="chip" data-k="t15">透明1.5全包</div>
       <div class="chip" data-k="tk">太空壳精孔</div>
       <div class="chip" data-k="dg">液态硅胶-古董白</div>
+      <div class="chip" data-k="hm">黑色磨砂壳</div>
     </div>
     <div class="stats" id="stats"></div>
     <div class="list" id="list"></div>
@@ -216,7 +217,8 @@
         <label class="spec-opt"><input type="checkbox" data-k="t15">透明1.5全包</label>
         <label class="spec-opt"><input type="checkbox" data-k="tk">太空壳精孔</label>
         <label class="spec-opt"><input type="checkbox" data-k="dg">液态硅胶-古董白</label>
-      </div>
+        <label class="spec-opt"><input type="checkbox" data-k="dg">液态硅胶-古董白</label>
+        <label class="spec-opt"><input type="checkbox" data-k="hm">黑色磨砂壳</label>
       <button class="save-btn" id="save-btn">保存录入</button>
       <div class="form-msg" id="form-msg"></div>
     </div>
@@ -256,9 +258,37 @@
 
 <script src="data.js"></script>
 <script>
-  const KEYS = ['tr', 't15', 'tk', 'dg'];
-  const LABEL = { tr: '透明软壳', t15: '透明1.5全包', tk: '太空壳精孔', dg: '液态硅胶-古董白' };
+  const KEYS = ['tr', 't15', 'tk', 'dg', 'hm'];
+  const LABEL = { tr: '透明软壳', t15: '透明1.5全包', tk: '太空壳精孔', dg: '液态硅胶-古董白', hm: '黑色磨砂壳' };
   const BRANDS = ['苹果','华为','荣耀','小米','OPPO','vivo','三星','魅族','努比亚','一加','LG','华硕','摩托罗拉','谷歌','NZONE','其他品牌'];
+  const HM_DATA = {
+  'iPhone 18 Pro Max': 'https://mtoss.motubaba.com/7958/SPEC/26/09/01/a912bc24713ee3d9.png',
+  'iPhone 18 Pro': 'https://mtoss.motubaba.com/1/WUG/26/08/27/549583f48bde9bbb.jpg',
+  'iPhone 17 Air': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/090219181d37ba4c.png',
+  'iPhone 17 Pro Max': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/5d0003251eb0c650.png',
+  'iPhone 17 Pro': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/b26f4a3b179e5755.png',
+  'iPhone 17': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/2836b17b8134477b.png',
+  'iPhone 16 Plus': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/0f14098033a15fd0.png',
+  'iPhone 16 Pro Max': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/f59f2fa999ab5b89.png',
+  'iPhone 16 Pro': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/e50331161f232e0c.png',
+  'iPhone 16': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/c962639da743bd04.png',
+  'iPhone 15 Pro Max': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/36c26d67c5aec437.png',
+  'iPhone 15 Plus': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/6580006bf24a4721.png',
+  'iPhone 15 Pro': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/363efaa521ab171c.png',
+  'iPhone 15': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/c89333105ab9dea8.png',
+  'iPhone 14 Pro Max': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/211823b164173810.png',
+  'iPhone 14 Pro': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/ecce6524af760286.png',
+  'iPhone 14 Plus': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/f37da4ea7360925f.png',
+  'iPhone 14': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/a6fbc70b5a7f034d.png',
+  'iPhone 13 Pro Max': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/bd60adde2fa343c7.png',
+  'iPhone 13 Pro': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/79054ce8a34fdc72.png',
+  'iPhone 13': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/f7861407c9e3cf71.png',
+  'iPhone 12 Pro': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/d37ad2670050621d.png',
+  'iPhone 12 Pro Max': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/6d65ebe1a3692398.png',
+  'iPhone 12': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/7f345898d12404bf.png',
+  'iPhone 11 Pro Max': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/82efe2f4fd93e777.png',
+  'iPhone 11': 'https://mtoss.motubaba.com/7958/SPEC/26/04/25/d63f0e8d178fcf10.png'
+};
   const LS_KEY = 'phone_case_custom_models';
 
   function loadCustom() {
@@ -270,13 +300,13 @@
   // 本地录入: 无图
   function getAllRows() {
     const built = DATA.map(r => {
-      const row = [r[0], r[1], r[2], r[3], r[4], r[5], false];
-      row.imgs = { tr: r[6] || '', t15: r[7] || '', tk: r[8] || '', dg: r[9] || '' };
+      const row = [r[0], r[1], r[2], r[3], r[4], r[5], !!HM_DATA[r[0]], false];
+      row.imgs = { tr: r[6] || '', t15: r[7] || '', tk: r[8] || '', dg: r[9] || '', hm: HM_DATA[r[0]] || '' };
       return row;
     });
     const custom = loadCustom().map(r => {
-      const row = [r.n, r.b, r.tr, r.t15, r.tk, r.dg, true];
-      row.imgs = { tr: '', t15: '', tk: '', dg: '' };
+      const row = [r.n, r.b, r.tr, r.t15, r.tk, r.dg, r.hm || false, true];
+      row.imgs = { tr: '', t15: '', tk: '', dg: '', hm: '' };
       return row;
     });
     return built.concat(custom);
@@ -321,7 +351,7 @@
   document.getElementById('lb-close').addEventListener('click', () => lightbox.classList.remove('show'));
   lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('show'); });
 
-  const CASE_COLORS = { tr: '#ffffff', t15: '#ffffff', tk: '#ffffff', dg: '#e9ddcd' };
+  const CASE_COLORS = { tr: '#ffffff', t15: '#ffffff', tk: '#ffffff', dg: '#e9ddcd', hm: '#000000' };
   function openLightbox(url, title, key) {
     if (!url) return;
     lbUserArt.style.display = 'none';
