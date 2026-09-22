@@ -345,14 +345,15 @@
   function updateArt() {
     const py = lbPosY.value;
     const sc = lbScale.value;
-    lbUserArt.style.backgroundPosition = 'center ' + py + '%';
-    lbUserArt.style.backgroundSize = sc + '% auto';
-    document.getElementById('lb-pos-y-val').textContent = py + '%';
+    lbUserArt.style.backgroundSize = 'cover';
+    lbUserArt.style.backgroundPosition = 'center center';
+    lbUserArt.style.transform = 'translateY(' + py + 'px) scale(' + sc / 100 + ')';
+    document.getElementById('lb-pos-y-val').textContent = py + 'px';
     document.getElementById('lb-scale-val').textContent = sc + '%';
   }
+
   lbPosY.addEventListener('input', updateArt);
   lbScale.addEventListener('input', updateArt);
-
 
   function render() {
     const q = state.q;
