@@ -372,9 +372,20 @@
     const txt = lbWmInput.value.trim();
     if (!txt) { lbWm.style.display = 'none'; return; }
     lbWm.style.display = 'block';
-    const svg = '<svg xmlns=' + 'http://www.w3.org/2000/svg' + ' width=200 height=100><text x=100 y=55 font-size=16 fill=' + 'white' + ' text-anchor=middle transform=rotate(-45 100 55)>' + txt + '</text></svg>';
-    lbWm.style.backgroundImage = 'url(data:image/svg+xml,' + encodeURIComponent(svg) + ')';
+    const pc = document.createElement('canvas');
+    pc.width = 200; pc.height = 100;
+    const pctx = pc.getContext('2d');
+    pctx.font = 'bold 16px sans-serif';
+    pctx.fillStyle = 'rgba(255,255,255,0.9)';
+    pctx.textAlign = 'center';
+    pctx.save();
+    pctx.translate(100, 50);
+    pctx.rotate(-Math.PI / 4);
+    pctx.fillText(txt, 0, 0);
+    pctx.restore();
+    lbWm.style.backgroundImage = 'url(' + pc.toDataURL() + ')';
     lbWm.style.backgroundRepeat = 'repeat';
+    lbWm.style.backgroundSize = '200px 100px';
   }
   lbWmInput.addEventListener('input', updateWm);
 
@@ -403,11 +414,13 @@
       } else { cb(); }
     };
     drawArt(() => {
-      const mImg = new Image();
-      mImg.crossOrigin = 'anonymous';
-      mImg.onload = () => { ctx.drawImage(mImg, 0, 0, w, h); drawWm(); };
-      mImg.onerror = () => { drawWm(); };
-      mImg.src = lbImg.src;
+      fetch(lbImg.src).then(r => r.blob()).then(b => {
+        const url = URL.createObjectURL(b);
+        const mImg = new Image();
+        mImg.onload = () => { ctx.drawImage(mImg, 0, 0, w, h); URL.revokeObjectURL(url); drawWm(); };
+        mImg.onerror = () => { drawWm(); };
+        mImg.src = url;
+      }).catch(() => { drawWm(); });
     });
     function drawWm() {
       const wmTxt = lbWmInput.value.trim();
