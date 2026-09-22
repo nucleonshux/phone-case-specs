@@ -371,7 +371,7 @@
     const txt = lbWmInput.value.trim();
     if (!txt) { lbWm.style.display = 'none'; return; }
     lbWm.style.display = 'block';
-    const svg = '<svg xmlns=http://www.w3.org/2000/svg width=200 height=100><text x=100 y=55 font-size=16 fill=%23000 text-anchor=middle transform=rotate(-45 100 55)>' + txt + '</text></svg>';
+    const svg = '<svg xmlns=' + 'http://www.w3.org/2000/svg' + ' width=200 height=100><text x=100 y=55 font-size=16 fill=' + 'white' + ' text-anchor=middle transform=rotate(-45 100 55)>' + txt + '</text></svg>';
     lbWm.style.backgroundImage = 'url(data:image/svg+xml,' + encodeURIComponent(svg) + ')';
     lbWm.style.backgroundRepeat = 'repeat';
   }
