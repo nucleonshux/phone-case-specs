@@ -98,11 +98,13 @@
   }
   .lb-btn.primary { background: #2b6cf6; border-color: #2b6cf6; }
   .composite-wrap { position: relative; width: 280px; max-width: 80vw; }
-  .composite-wrap .user-art {
-    position: absolute; top: 11%; left: 9%; width: 82%; height: 78%;
-    border-radius: 36px; object-fit: cover; display: none;
+  .composite-wrap .case-bg {
+    position: absolute; inset: 0; background: #fff; border-radius: 30px;
   }
-  .composite-wrap .base-mask { position: relative; width: 100%; display: block; }
+  .composite-wrap .user-art {
+    position: absolute; inset: 0; object-fit: cover; display: none; border-radius: 30px; max-width: none !important; max-height: none !important; background: none !important;
+  }
+  .composite-wrap .base-mask { position: relative; width: 100%; display: block; max-width: none !important; max-height: none !important; background: none !important; border-radius: 0 !important; }
 
   .del-btn {
     border: 1px solid #ffd6d6; background: #fff; color: #e5484d; font-size: 12px;
@@ -213,6 +215,7 @@
 <div class="lightbox" id="lightbox">
   <span class="lb-close" id="lb-close">&times;</span>
   <div class="composite-wrap">
+    <div class="case-bg" id="lb-bg"></div>
     <img id="lb-user-art" class="user-art" src="" alt="">
     <img id="lb-img" class="base-mask" src="" alt="">
   </div>
@@ -287,15 +290,16 @@
   const lightbox = document.getElementById('lightbox');
   const lbImg = document.getElementById('lb-img');
   const lbUserArt = document.getElementById('lb-user-art');
+  const lbBg = document.getElementById('lb-bg');
   document.getElementById('lb-close').addEventListener('click', () => lightbox.classList.remove('show'));
   lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('show'); });
 
-  let currentBaseUrl = '';
-  function openLightbox(url, title) {
+  const CASE_COLORS = { tr: '#ffffff', t15: '#ffffff', tk: '#ffffff', dg: '#e9ddcd' };
+  function openLightbox(url, title, key) {
     if (!url) return;
-    currentBaseUrl = url;
     lbUserArt.style.display = 'none';
     lbUserArt.src = '';
+    lbBg.style.background = CASE_COLORS[key] || '#ffffff';
     lbImg.src = url;
     document.getElementById('lb-title').textContent = title;
     lightbox.classList.add('show');
@@ -351,7 +355,7 @@
           if (!r[KEYS.indexOf(k) + 2]) return '';  // 不支持的不显示
           const url = r.imgs[k];
           if (!url) return '<div class="thumb"><div class="tlabel">' + LABEL[k] + '</div></div>';
-          return '<div class="thumb" data-img="' + url + '" data-label="' + r[0] + ' · ' + LABEL[k] + '"><img src="' + url + '" loading="lazy" alt="' + LABEL[k] + '"><div class="tlabel">' + LABEL[k] + '</div></div>';
+          return '<div class="thumb" data-img="' + url + '" data-label="' + r[0] + ' · ' + LABEL[k] + '" data-key="' + k + '"><img src="' + url + '" loading="lazy" alt="' + LABEL[k] + '"><div class="tlabel">' + LABEL[k] + '</div></div>';
         }).join('');
         html += '<div class="detail"><div class="detail-title">点击底图查看大图</div><div class="thumbs">' + thumbs + '</div></div>';
       }
@@ -370,7 +374,7 @@
     listEl.querySelectorAll('.thumb').forEach(t => {
       t.addEventListener('click', e => {
         e.stopPropagation();
-        openLightbox(t.dataset.img, t.dataset.label);
+        openLightbox(t.dataset.img, t.dataset.label, t.dataset.key);
       });
     });
     if (rows.length > 200) listEl.innerHTML += '<div class="empty" style="padding:24px;">仅显示前 200 条，请输入更精确的型号以缩小范围</div>';
