@@ -97,6 +97,9 @@
     border: 1px solid #fff; background: transparent; color: #fff;
   }
   .lb-btn.primary { background: #2b6cf6; border-color: #2b6cf6; }
+  .mat-btns { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0; }
+  .mat-btn { padding: 8px 16px; font-size: 13px; border-radius: 8px; border: 1px solid #d6dae3; background: #fff; cursor: pointer; color: #333; }
+  .mat-btn:hover { border-color: #2b6cf6; color: #2b6cf6; }
   .lb-sliders { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; width: 280px; max-width: 80vw; }
   .lb-sliders label { color: #ccc; font-size: 12px; display: flex; align-items: center; gap: 8px; }
   .lb-sliders span { min-width: 38px; text-align: right; color: #2b6cf6; font-weight: 600; font-size: 12px; }
@@ -230,10 +233,11 @@
   <div class="lb-actions">
     <button class="lb-btn primary" id="lb-upload">预览图</button>
     <button class="lb-btn" id="lb-reset">恢复底图</button>
+    <button class="lb-btn" id="lb-save">保存效果图</button>
   </div>
   <input type="file" id="lb-file" accept="image/*" style="display:none;">
   <div class="lb-sliders" id="lb-sliders" style="display:none;">
-    <label>上下位置<input type="range" id="lb-pos-y" min="0" max="100" value="50" step="1"><span id="lb-pos-y-val">50%</span></label>
+    <label>上下位置<input type="range" id="lb-pos-y" min="-100" max="200" value="50" step="1"><span id="lb-pos-y-val">50%</span></label>
     <label>大小<input type="range" id="lb-scale" min="50" max="200" value="100" step="1"><span id="lb-scale-val">100%</span></label>
   </div>
 </div>
@@ -399,7 +403,7 @@
       });
     });
     // 缩略图点击大图
-    listEl.querySelectorAll('.thumb').forEach(t => {
+    listEl.querySelectorAll('.mat-btn').forEach(t => {
       t.addEventListener('click', e => {
         e.stopPropagation();
         openLightbox(t.dataset.img, t.dataset.label, t.dataset.key);
