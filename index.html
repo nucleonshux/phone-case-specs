@@ -99,6 +99,7 @@
   .lb-btn.primary { background: #2b6cf6; border-color: #2b6cf6; }
   .lb-sliders { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; width: 280px; max-width: 80vw; }
   .lb-sliders label { color: #ccc; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+  .lb-sliders span { min-width: 38px; text-align: right; color: #2b6cf6; font-weight: 600; font-size: 12px; }
   .lb-sliders input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; background: #444; border-radius: 2px; outline: none; }
   .lb-sliders input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #2b6cf6; cursor: pointer; box-shadow: 0 0 4px rgba(43,108,246,.5); }
   .user-art { transition: background-position .15s ease-out, background-size .15s ease-out; }
@@ -232,8 +233,8 @@
   </div>
   <input type="file" id="lb-file" accept="image/*" style="display:none;">
   <div class="lb-sliders" id="lb-sliders" style="display:none;">
-    <label>上下位置<input type="range" id="lb-pos-y" min="0" max="100" value="50" step="1"></label>
-    <label>大小<input type="range" id="lb-scale" min="50" max="200" value="100" step="1"></label>
+    <label>上下位置<input type="range" id="lb-pos-y" min="0" max="100" value="50" step="1"><span id="lb-pos-y-val">50%</span></label>
+    <label>大小<input type="range" id="lb-scale" min="50" max="200" value="100" step="1"><span id="lb-scale-val">100%</span></label>
   </div>
 </div>
 
@@ -342,6 +343,8 @@
     const sc = lbScale.value;
     lbUserArt.style.backgroundPosition = 'center ' + py + '%';
     lbUserArt.style.backgroundSize = sc + '% auto';
+    document.getElementById('lb-pos-y-val').textContent = py + '%';
+    document.getElementById('lb-scale-val').textContent = sc + '%';
   }
   lbPosY.addEventListener('input', updateArt);
   lbScale.addEventListener('input', updateArt);
