@@ -102,9 +102,9 @@
     position: absolute; inset: 0; background: #fff; border-radius: 30px;
   }
   .composite-wrap .user-art {
-    position: absolute; inset: 0; object-fit: fill; display: none; border-radius: 30px; max-width: none !important; max-height: none !important; background: none !important;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
   }
-  .composite-wrap .base-mask { position: relative; width: 100%; display: block; max-width: none !important; max-height: none !important; background: none !important; border-radius: 0 !important; }
+
 
   .del-btn {
     border: 1px solid #ffd6d6; background: #fff; color: #e5484d; font-size: 12px;
@@ -216,7 +216,7 @@
   <span class="lb-close" id="lb-close">&times;</span>
   <div class="composite-wrap">
     <div class="case-bg" id="lb-bg"></div>
-    <img id="lb-user-art" class="user-art" src="" alt="">
+    <div id="lb-user-art" class="user-art"></div>
     <img id="lb-img" class="base-mask" src="" alt="">
   </div>
   <div class="lb-title" id="lb-title"></div>
@@ -298,7 +298,7 @@
   function openLightbox(url, title, key) {
     if (!url) return;
     lbUserArt.style.display = 'none';
-    lbUserArt.src = '';
+    lbUserArt.style.backgroundImage = '';
     lbBg.style.background = CASE_COLORS[key] || '#ffffff';
     lbImg.src = url;
     document.getElementById('lb-title').textContent = title;
@@ -312,14 +312,14 @@
     if (!f) return;
     const reader = new FileReader();
     reader.onload = ev => {
-      lbUserArt.src = ev.target.result;
+      lbUserArt.style.backgroundImage = 'url(' + ev.target.result + ')';
       lbUserArt.style.display = 'block';
     };
     reader.readAsDataURL(f);
   });
   document.getElementById('lb-reset').addEventListener('click', () => {
     lbUserArt.style.display = 'none';
-    lbUserArt.src = '';
+    lbUserArt.style.backgroundImage = '';
   });
 
   function render() {
