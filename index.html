@@ -107,7 +107,7 @@
     position: absolute; inset: 0; background: #fff; border-radius: 30px;
   }
   .composite-wrap .user-art {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; background-size: cover; background-position: center; background-repeat: no-repeat;
   }
   .composite-wrap .base-mask { position: relative; width: 100%; display: block; max-width: none !important; max-height: none !important; background: none !important; border-radius: 0 !important; }
 
@@ -329,7 +329,19 @@
   document.getElementById('lb-reset').addEventListener('click', () => {
     lbUserArt.style.display = 'none';
     lbUserArt.style.backgroundImage = '';
+    document.getElementById('lb-sliders').style.display = 'none';
   });
+  const lbPosY = document.getElementById('lb-pos-y');
+  const lbScale = document.getElementById('lb-scale');
+  function updateArt() {
+    const py = lbPosY.value;
+    const sc = lbScale.value;
+    lbUserArt.style.backgroundPosition = 'center ' + py + '%';
+    lbUserArt.style.backgroundSize = sc + '% auto';
+  }
+  lbPosY.addEventListener('input', updateArt);
+  lbScale.addEventListener('input', updateArt);
+
 
   function render() {
     const q = state.q;
