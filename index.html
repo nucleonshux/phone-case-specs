@@ -97,6 +97,11 @@
     border: 1px solid #fff; background: transparent; color: #fff;
   }
   .lb-btn.primary { background: #2b6cf6; border-color: #2b6cf6; }
+  .lb-sliders { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; width: 280px; max-width: 80vw; }
+  .lb-sliders label { color: #ccc; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+  .lb-sliders input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; background: #444; border-radius: 2px; outline: none; }
+  .lb-sliders input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #2b6cf6; cursor: pointer; box-shadow: 0 0 4px rgba(43,108,246,.5); }
+  .user-art { transition: background-position .15s ease-out, background-size .15s ease-out; }
   .composite-wrap { position: relative; width: 280px; max-width: 80vw; overflow: hidden; border-radius: 30px; }
   .composite-wrap .case-bg {
     position: absolute; inset: 0; background: #fff; border-radius: 30px;
@@ -222,7 +227,7 @@
   </div>
   <div class="lb-title" id="lb-title"></div>
   <div class="lb-actions">
-    <button class="lb-btn primary" id="lb-upload">上传自己的图预览</button>
+    <button class="lb-btn primary" id="lb-upload">预览图</button>
     <button class="lb-btn" id="lb-reset">恢复底图</button>
   </div>
   <input type="file" id="lb-file" accept="image/*" style="display:none;">
@@ -315,6 +320,9 @@
     reader.onload = ev => {
       lbUserArt.style.backgroundImage = 'url(' + ev.target.result + ')';
       lbUserArt.style.display = 'block';
+      document.getElementById('lb-sliders').style.display = 'flex';
+      lbPosY.value = 50; lbScale.value = 100;
+      updateArt();
     };
     reader.readAsDataURL(f);
   });
