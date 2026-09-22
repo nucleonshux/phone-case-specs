@@ -373,16 +373,16 @@
     if (!txt) { lbWm.style.display = 'none'; return; }
     lbWm.style.display = 'block';
     const pc = document.createElement('canvas');
-    pc.width = 200; pc.height = 100;
+    pc.width = 140; pc.height = 70;
     const pctx = pc.getContext('2d');
-    pctx.font = 'bold 16px sans-serif';
+    pctx.font = 'bold 13px sans-serif';
     pctx.fillStyle = 'rgba(255,255,255,0.9)';
     pctx.textAlign = 'center';
     pctx.save();
-    pctx.translate(100, 50);
+    pctx.translate(70, 35);
     pctx.rotate(-Math.PI / 4);
     pctx.fillText(txt, 0, 0);
-    pctx.restore();
+    lbWm.style.backgroundSize = '140px 70px';
     lbWm.style.backgroundImage = 'url(' + pc.toDataURL() + ')';
     lbWm.style.backgroundRepeat = 'repeat';
     lbWm.style.backgroundSize = '200px 100px';
@@ -425,9 +425,9 @@
     function drawWm() {
       const wmTxt = lbWmInput.value.trim();
       if (wmTxt) {
-        ctx.save();
-        ctx.font = "bold 49px sans-serif";
-        ctx.fillStyle = "rgba(255,255,255,0.8)";
+        ctx.font = 'bold 39px sans-serif';
+        for (let yy = -200; yy < h + 200; yy += 200) {
+          for (let xx = -400; xx < w + 400; xx += 400) {
         ctx.globalAlpha = 0.25;
         ctx.textAlign = "center";
         for (let yy = -300; yy < h + 300; yy += 300) {
