@@ -240,6 +240,11 @@
     <label>上下位置<input type="range" id="lb-pos-y" min="-100" max="200" value="50" step="1"><span id="lb-pos-y-val">50%</span></label>
     <label>大小<input type="range" id="lb-scale" min="50" max="200" value="100" step="1"><span id="lb-scale-val">100%</span></label>
   </div>
+  <div id="save-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;flex-direction:column;">
+    <img id="save-result" style="max-width:90%;max-height:80vh;object-fit:contain;" />
+    <div style="color:#fff;padding:16px;font-size:14px;text-align:center;">长按图片保存到相册</div>
+    <button id="save-close" style="margin-top:8px;padding:8px 24px;border-radius:8px;border:none;background:#2b6cf6;color:#fff;">关闭</button>
+  </div>
 </div>
 
 <script src="data.js"></script>
@@ -354,6 +359,51 @@
 
   lbPosY.addEventListener('input', updateArt);
   lbScale.addEventListener('input', updateArt);
+
+  document.getElementById('lb-save').addEventListener('click', () => {
+    const w = 861, h = 1784;
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = lbBg.style.background || '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    const sc = lbScale.value / 100;
+    const py = parseFloat(lbPosY.value);
+    const drawArt = (cb) => {
+      if (lbUserArt.style.backgroundImage && lbUserArt.style.display !== 'none') {
+        const imgUrl = lbUserArt.style.backgroundImage.slice(5, -2);
+        const img = new Image();
+        img.onload = () => {
+          const iw = img.width * sc, ih = img.height * sc;
+          const ox = (w - iw) / 2;
+          const oy = (h - ih) / 2 + py * 2;
+          ctx.drawImage(img, ox, oy, iw, ih);
+          cb();
+        };
+        img.onerror = cb;
+        img.src = imgUrl;
+      } else { cb(); }
+    };
+    drawArt(() => {
+      const mImg = new Image();
+      mImg.crossOrigin = 'anonymous';
+      mImg.onload = () => { ctx.drawImage(mImg, 0, 0, w, h); showResult(); };
+      mImg.onerror = () => { showResult(); };
+      mImg.src = lbImg.src;
+    });
+    function showResult() {
+      try {
+        const url = canvas.toDataURL('image/png');
+        document.getElementById('save-result').src = url;
+        document.getElementById('save-overlay').style.display = 'flex';
+      } catch(e) {
+        alert('底图跨域限制无法合成，请直接截图保存');
+      }
+    }
+  });
+  document.getElementById('save-close').addEventListener('click', () => {
+    document.getElementById('save-overlay').style.display = 'none';
+  });
 
   function render() {
     const q = state.q;
